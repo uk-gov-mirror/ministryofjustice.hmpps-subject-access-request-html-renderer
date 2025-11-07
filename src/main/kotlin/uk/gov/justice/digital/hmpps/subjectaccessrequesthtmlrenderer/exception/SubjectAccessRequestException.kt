@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.exception
 
+import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.service.RenderRequest
 import java.util.UUID
 
 /**
@@ -138,3 +139,15 @@ class SubjectAccessRequestBadRequestException(
   message: String,
   subjectAccessRequestId: UUID? = null,
 ) : SubjectAccessRequestException(message = message, subjectAccessRequestId = subjectAccessRequestId)
+
+class SubjectAccessRequestGetTemplateException(
+  message: String = "GET service template request returned unexpected error",
+  renderRequest: RenderRequest,
+  val status: Int,
+) : SubjectAccessRequestException(
+  message = message,
+  subjectAccessRequestId = renderRequest.id,
+) {
+  val serviceName: String = renderRequest.serviceConfiguration.serviceName
+  val url: String = renderRequest.serviceConfiguration.url
+}

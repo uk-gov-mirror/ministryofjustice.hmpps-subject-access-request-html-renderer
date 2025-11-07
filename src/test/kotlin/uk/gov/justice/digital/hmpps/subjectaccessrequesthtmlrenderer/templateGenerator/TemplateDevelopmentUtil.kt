@@ -10,8 +10,8 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequest.templates.TemplateHelpe
 import uk.gov.justice.digital.hmpps.subjectaccessrequest.templates.TemplateRenderService
 import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.models.ServiceConfiguration
 import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.service.RenderRequest
-import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.templates.TemplateResources
-import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.templates.TemplateService
+import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.templates.TemplateResourcesService
+import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.templates.TemplateRenderingService
 import java.io.ByteArrayOutputStream
 import java.io.FileInputStream
 import java.nio.file.Files
@@ -35,13 +35,13 @@ class TemplateGeneratorUtil {
   private val telemetryClient: TelemetryClient = mock()
   private val templateDataFetcherFacade: TemplateDataFetcherFacade = mock()
 
-  private val templateResources: TemplateResources = TemplateResources()
+  private val templateResourcesService: TemplateResourcesService = TemplateResourcesService()
 
   private val templateHelpers = TemplateHelpers(templateDataFetcherFacade)
 
   private val templateRenderService: TemplateRenderService = TemplateRenderService(templateHelpers)
 
-  private val templateService: TemplateService = TemplateService(templateRenderService, templateResources, telemetryClient)
+  private val templateRenderingService: TemplateRenderingService = TemplateRenderingService(templateRenderService, templateResourcesService, telemetryClient)
 
   init {
     whenever(templateDataFetcherFacade.findUserLastNameByUsername(any())).thenReturn("Homer Simpson")
@@ -85,7 +85,7 @@ class TemplateGeneratorUtil {
   private fun renderHtml(renderRequest: RenderRequest, isNullData: Boolean): ByteArrayOutputStream {
     val data = if (isNullData) null else getServiceResponseStubData(renderRequest.serviceConfiguration.serviceName)
 
-    return templateService.renderServiceDataHtml(renderRequest = renderRequest, data = data)
+    return templateRenderingService.renderServiceDataHtml(renderRequest = renderRequest, data = data)
       ?: throw renderedTemplateNullException(renderRequest.serviceConfiguration.serviceName)
   }
 

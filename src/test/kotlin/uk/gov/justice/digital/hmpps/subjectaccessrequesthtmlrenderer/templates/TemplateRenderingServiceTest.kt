@@ -21,7 +21,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.repository.
 import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.repository.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.service.RenderRequest
 
-class TemplateServiceTest {
+class TemplateRenderingServiceTest {
   private val prisonDetailsRepository: PrisonDetailsRepository = mock()
   private val userDetailsRepository: UserDetailsRepository = mock()
   private val locationDetailsRepository: LocationDetailsRepository = mock()
@@ -32,14 +32,14 @@ class TemplateServiceTest {
   private val templateDataFetcherFacade = TemplateDataFetcherFacadeImpl(prisonDetailsRepository, userDetailsRepository, locationDetailsRepository, locationsApiClient, nomisMappingApiClient)
   private val templateHelpers = TemplateHelpers(templateDataFetcherFacade)
   private val templateRenderService = TemplateRenderService(templateHelpers)
-  private val templateService = TemplateService(
+  private val templateRenderingService = TemplateRenderingService(
     templateRenderService,
-    TemplateResources(templatesDirectory = "/templates"),
+    TemplateResourcesService(templatesDirectory = "/templates"),
     telemetryClient,
   )
 
   private fun renderServiceDataHtml(serviceName: String, data: Any?): String {
-    val actual = templateService.renderServiceDataHtml(
+    val actual = templateRenderingService.renderServiceDataHtml(
       RenderRequest(
         serviceConfiguration = ServiceConfiguration(
           serviceName = serviceName,
@@ -264,7 +264,7 @@ class TemplateServiceTest {
   @Test
   fun `renderTemplate throws exception when the specified service template does not exist`() {
     val actual = assertThrows<SubjectAccessRequestTemplatingException> {
-      templateService.renderServiceDataHtml(
+      templateRenderingService.renderServiceDataHtml(
         RenderRequest(
           serviceConfiguration = ServiceConfiguration(
             serviceName = "THIS_IS_MADE_UP",

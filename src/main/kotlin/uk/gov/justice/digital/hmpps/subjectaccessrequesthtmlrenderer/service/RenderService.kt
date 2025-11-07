@@ -26,7 +26,7 @@ import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.config.Rend
 import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.config.RenderEvent.STORE_SERVICE_DATA_STARTED
 import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.config.renderEvent
 import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.exception.SubjectAccessRequestException
-import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.templates.TemplateService
+import uk.gov.justice.digital.hmpps.subjectaccessrequesthtmlrenderer.templates.TemplateRenderingService
 import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets.UTF_8
 import java.util.UUID
@@ -35,7 +35,7 @@ import java.util.UUID
 class RenderService(
   private val dynamicServicesClient: DynamicServicesClient,
   private val documentStore: DocumentStore,
-  private val templateService: TemplateService,
+  private val templateRenderingService: TemplateRenderingService,
   private val telemetryClient: TelemetryClient,
   private val objectMapper: ObjectMapper,
 ) {
@@ -94,7 +94,7 @@ class RenderService(
         documentHtmlKey,
         renderRequest.serviceConfiguration.serviceName,
       )
-      val renderedData = templateService.renderServiceDataHtml(renderRequest, content)
+      val renderedData = templateRenderingService.renderServiceDataHtml(renderRequest, content)
       storeRenderedHtml(renderRequest, renderedData)
       log.info("document {} created and added to document store", documentHtmlKey)
       return RenderResult.CREATED

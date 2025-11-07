@@ -85,6 +85,13 @@ class SarDataSourceApiMockServer : WireMockServer(8092) {
     )
   }
 
+  fun stubGetTemplate(responseDefinition: ResponseDefinitionBuilder) {
+    stubFor(
+      get(urlPathEqualTo("/subject-access-request/template"))
+        .willReturn(responseDefinition),
+    )
+  }
+
   fun verifyGetSubjectAccessRequestDataCalled(times: Int = 1) = verify(
     times,
     getRequestedFor(urlPathEqualTo("/subject-access-request")),
@@ -103,6 +110,11 @@ class SarDataSourceApiMockServer : WireMockServer(8092) {
   fun verifyGetAttachmentNeverCalled(filename: String) = verify(
     0,
     getRequestedFor(urlPathEqualTo("/attachments/$filename")),
+  )
+
+  fun verifyGetTemplateCall(times: Int = 1) = verify(
+    times,
+    getRequestedFor(urlPathEqualTo("/subject-access-request/template")),
   )
 }
 
